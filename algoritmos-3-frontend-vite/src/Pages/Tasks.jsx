@@ -25,11 +25,20 @@ function Tasks() {
               <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Descripcion de la Tarea</th>
+                <th scope ="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                
+                  <th>1</th>
+                    <th>Aprobar Algoritmos</th>
+                    <th>
+                      <a class= "btn btn-primary ">Ver</a>
+                        <a class= "btn btn-success">Modificar</a>
+                        <a  class= "btn btn-danger">Eliminar</a>  
+                        
+                      </th>
+                        
               </tr>
             </tbody>
           </table>

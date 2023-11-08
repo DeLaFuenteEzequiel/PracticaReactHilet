@@ -21,14 +21,7 @@ const App = () => {
           path:'/create',
           element: <Inicio children={<CreateTasks />} />
         },
-        {
-          path:'/delete',
-          element: <Inicio children={<Tasks />} />
-        },
-        {
-          path:'/update',
-          element: <Inicio children={<Tasks/>} />
-        },
+        
       ]);
     
   }, []);
