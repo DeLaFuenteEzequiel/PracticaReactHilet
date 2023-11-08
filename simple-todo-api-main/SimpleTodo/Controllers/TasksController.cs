@@ -52,6 +52,28 @@ namespace SimpleTodo.Controllers
             return Ok(resTask);
         }
 
+        [HttpPatch("{id}")]
+
+        public IActionResult Patch(int id, [FromBody] SaveTask newValues)
+        {
+            var existingTask = TasksList.GetTask(id);
+            if (existingTask == null)
+            {
+                return NotFound();
+            }
+
+            // Aplicar las modificaciones parciales a la tarea existente
+            if (!string.IsNullOrEmpty(newValues.Description))
+            {
+                existingTask.Description = newValues.Description;
+            }
+
+           
+
+            // Devolver la tarea actualizada
+            return Ok(existingTask);
+        }
+
         // DELETE api/<TasksController>/5
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
