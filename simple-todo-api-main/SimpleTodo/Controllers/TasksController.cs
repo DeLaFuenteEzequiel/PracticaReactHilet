@@ -13,7 +13,7 @@ namespace SimpleTodo.Controllers
     {
 
         // GET: api/<TasksController>
-        [HttpGet]
+        [HttpGet("tasks")]
         public IActionResult Get()
         {
             if (TasksList.Any() == false)
@@ -23,7 +23,7 @@ namespace SimpleTodo.Controllers
         }
 
         // GET api/<TasksController>/5
-        [HttpGet("{id}")]
+        [HttpGet("tasks/{id}")]
         public IActionResult Get(int id)
         {
             var task= TasksList.GetTask(id);
@@ -32,7 +32,7 @@ namespace SimpleTodo.Controllers
         }
 
         // POST api/<TasksController>
-        [HttpPost]
+        [HttpPost("create")]
         public IActionResult Post([FromBody] SaveTask newTask)
         {
             if (ModelState.IsValid == false) return ValidationProblem(ModelState);
@@ -42,7 +42,7 @@ namespace SimpleTodo.Controllers
         }
 
         // PUT api/<TasksController>/5
-        [HttpPut("{id}")]
+        [HttpPut("modify/{id}")]
         public IActionResult Put(int id, [FromBody] SaveTask newValues)
         {
             if (ModelState.IsValid == false) return ValidationProblem(ModelState);
@@ -52,7 +52,7 @@ namespace SimpleTodo.Controllers
             return Ok(resTask);
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("update/{id}")]
 
         public IActionResult Patch(int id, [FromBody] SaveTask newValues)
         {
@@ -75,7 +75,7 @@ namespace SimpleTodo.Controllers
         }
 
         // DELETE api/<TasksController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public IActionResult Delete(int id)
         {
             if(TasksList.Delete(id) == false) return NotFound();
