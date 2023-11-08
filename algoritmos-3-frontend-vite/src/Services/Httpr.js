@@ -21,7 +21,7 @@ export async function POSTU(url, file){ //POST De archivos
     .catch((err) => err);
 }
 
-
+console.log("asd");
 
 export async function POST(url, request){
     

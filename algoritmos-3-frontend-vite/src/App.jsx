@@ -14,6 +14,10 @@ const App = () => {
     
       setAvailableRoutes([
         {
+          path:'/',
+          element: <Inicio />
+        },
+        {
           path:'/tasks',
           element: <Inicio children={<Tasks />} />
         },
@@ -32,7 +36,6 @@ const App = () => {
       
     <BrowserRouter>
       
-    
       <Routes>
         {availableRoutes.map((item, index) => (
           <Route path={item.path} element={item.element} key={index} />
