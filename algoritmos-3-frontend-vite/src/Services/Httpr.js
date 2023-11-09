@@ -1,4 +1,4 @@
-const backendurl = "http://192.168.0.69:3001/api/tasks";
+const backendurl = "http://localhost:5033/api/tasks";
 
 export default backendurl;
 

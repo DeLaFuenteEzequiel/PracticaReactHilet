@@ -1,8 +1,38 @@
 import { useEffect, useState } from "react";
-
+import { createTasks } from '../Services/Tasks.js';
 
 
 const CreateTasks = () => {
+
+  const [description, setDescription] = useState("");
+
+  const handleDescriptionChange = (event) => {
+    setDescription(event.target.value); 
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault(); 
+
+   
+    const newTaskData = {
+      description: description,
+    };
+
+    try {
+      
+      const response = await createTasks(newTaskData);
+
+      
+      console.log("Tarea creada con éxito", response);
+    } catch (error) {
+      console.error("Error al crear la tarea", error);
+    }
+  };
+
+
+
+
+
     return (
         <html lang="en">
           <head>
@@ -23,10 +53,10 @@ const CreateTasks = () => {
               <div className="row">
                 <div className="col">
                
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div class="form-group">
-                        <label for="exampleInputEmail1">Descripcion</label>
-                        <input type="text" class="form-control" id="descripcion"/>
+                        <label htmlFor="descripcion"  >Descripcion</label>
+                        <input type="text" class="form-control" id="descripcion"  value={description} onChange={handleDescriptionChange} />
                         
                     </div>
                    
