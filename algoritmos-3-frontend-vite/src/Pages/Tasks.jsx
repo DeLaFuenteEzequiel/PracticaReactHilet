@@ -1,23 +1,114 @@
 import React, { useEffect, useState } from "react";
-import { searchTasks } from '../Services/Tasks.js'; // Importa el servicio para buscar tareas
+import { searchTasks, getTaskById, deleteTask, updateTaskData } from '../Services/Tasks.js';
 
 function Tasks() {
   const [tableInfo, setTableInfo] = useState([]);
 
+  const [selectedTask, setSelectedTask] = useState(null); 
+  const [showDetail, setShowDetail] = useState(false); 
+
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [isEditing, setIsEditing] = useState(false); 
+  const [editedDescription, setEditedDescription] = useState('');
+
   const loadTableData = async () => {
-    // Realiza una llamada a la función que obtiene las tareas (searchTasks)
+    
     try {
       const rsp = await searchTasks(); 
-      console.log(rsp);// Asegúrate de que tu servicio devuelva los datos de las tareas
-      setTableInfo(rsp); // Actualiza el estado con los datos de las tareas
+      console.log(rsp);
+      setTableInfo(rsp); 
     } catch (error) {
       console.error("Error al cargar los datos:", error);
     }
   }
 
   useEffect(() => {
-    loadTableData(); // Carga los datos de las tareas cuando el componente se monta
+    loadTableData(); 
   }, []);
+
+
+  const handleViewTask = async (taskId) => {
+    try {
+      const response = await getTaskById(taskId);
+      if (response) {
+        setSelectedTask(response); 
+        setShowDetail(true); 
+      } else {
+        console.error("Tarea no encontrada");
+      }
+    } catch (error) {
+      console.error("Error al cargar la tarea:", error);
+    }
+  };
+
+  const handleCloseDetail = () => {
+    setShowDetail(false);
+    setSelectedTask(null); 
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    try {
+      const response = await deleteTask(taskId);
+      if (response) {
+        loadTableData();
+      } else {
+        console.error("Error al eliminar la tarea");
+      }
+    } catch (error) {
+      console.error("Error al eliminar la tarea:", error);
+    }
+  };
+
+  const handleEditTask = (taskId) => {
+    setEditingTaskId(taskId);
+    const taskToEdit = tableInfo.find((task) => task.id === taskId);
+    setEditedDescription(taskToEdit.description);
+  };
+
+  const handleSaveTask = async () => {
+    try {
+      const response = await updateTaskData(selectedTask.id, {
+        description: editedDescription,
+      });
+
+      if (response) {
+        setSelectedTask({
+          ...selectedTask,
+          description: editedDescription,
+        });
+
+        setIsEditing(false);
+      } else {
+        console.error('Error al guardar la tarea');
+      }
+    } catch (error) {
+      console.error('Error al guardar la tarea:', error);
+    }
+  };
+
+  const handleUpdateTask = async (taskId) => {
+    try {
+      const response = await updateTaskData(taskId, { description: editedDescription });
+  
+      if (response) {
+        // Actualizar el estado de la tabla después de la modificación
+        setTableInfo((prevTableInfo) =>
+          prevTableInfo.map((task) =>
+            task.id === taskId ? { ...task, description: editedDescription } : task
+          )
+        );
+        // Restablecer el estado de edición
+        setEditingTaskId(null);
+      } else {
+        console.error('Error al modificar la tarea');
+      }
+    } catch (error) {
+      console.error('Error al modificar la tarea:', error);
+    }
+  };
+
+  
+
 
   return (
     
@@ -50,15 +141,49 @@ function Tasks() {
                   </thead>
                   <tbody>
           {tableInfo.map((task) => (
-            <tr key={task.id}>
-              <td>{task.id}</td>
-              <td>{task.description}</td>
-              <td>
-                <a className="btn btn-primary">Ver</a>
-                <a className="btn btn-success">Modificar</a>
-                <a className="btn btn-danger">Eliminar</a>
-              </td>
-            </tr>
+           <tr key={task.id}>
+           <td>{task.id}</td>
+           <td>
+             {editingTaskId === task.id ? (
+               <input
+                 type="text"
+                 value={editedDescription}
+                 onChange={(e) => setEditedDescription(e.target.value)}
+               />
+             ) : (
+               task.description
+             )}
+           </td>
+           <td>
+             {editingTaskId === task.id ? (
+               <button
+                 className="btn btn-success"
+                 onClick={() => handleUpdateTask(task.id)}
+               >
+                 Guardar
+               </button>
+             ) : (
+               <button
+                 className="btn btn-success"
+                 onClick={() => handleEditTask(task.id)}
+               >
+                 Modificar
+               </button>
+             )}
+             <button
+               className="btn btn-primary"
+               onClick={() => handleViewTask(task.id)}
+             >
+               Ver
+             </button>
+             <button
+               className="btn btn-danger"
+               onClick={() => handleDeleteTask(task.id)}
+             >
+               Eliminar
+             </button>
+           </td>
+         </tr>
           ))}
         </tbody>
                 </table>
@@ -80,6 +205,20 @@ function Tasks() {
               crossOrigin="anonymous"
             ></script>
           </body>
+
+          {showDetail && (
+        <div className="row">
+          <div className="col">
+            <h2>Detalles de la Tarea</h2>
+            <p>ID: {selectedTask.id}</p>
+            <p>Descripción: {selectedTask.description}</p>
+            <button className="btn btn-primary" onClick={handleCloseDetail}>
+              Cerrar Detalles
+            </button>
+          </div>
+        </div>
+      )}
+
         </html>
   );
 }
